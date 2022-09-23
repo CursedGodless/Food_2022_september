@@ -1,0 +1,22 @@
+{
+  "name": "food_september_2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CursedGodless/Food_2022_september.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CursedGodless/Food_2022_september/issues"
+  },
+  "homepage": "https://github.com/CursedGodless/Food_2022_september#readme",
+  "devDependencies": {
+    "json-server": "^0.17.0"
+  }
+}

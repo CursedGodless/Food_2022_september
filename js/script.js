@@ -145,14 +145,41 @@ class MenuCard {
 	}
 }
 
-new MenuCard("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', `Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и
-фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким
-качеством!`, 229, '.menu__field .container').render();
-
+getData('http://localhost:3000/menu')
+.then(data=>{
+	data.forEach(({img,altimg,title,descr,price})=>{
+		new MenuCard(img,altimg,title,descr,price,'.menu__field .container').render()
+	})
+})
 
 const forms = document.querySelectorAll('form');
 
-function postData(form) {
+async function getData(src) {
+	return await fetch(src)
+	.then(response => {
+		if (response.ok) {
+			return response.json()
+		} else {
+			throw new Error('error');
+		}
+	})
+}
+
+async function postData(src, data) {
+	return await fetch(src, {
+		body: data,
+		method: 'POST',
+		headers: { 'Content-type': 'application/json' }
+	}).then(response => {
+		if (response.ok) {
+			return response.text()
+		} else {
+			throw new Error('error');
+		}
+	})
+}
+
+function formProcessing(form) {
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
 
@@ -195,20 +222,8 @@ function postData(form) {
 
 		form.insertAdjacentElement('afterend', loading);
 
-		fetch('server.php', {
-			body: JSON.stringify(Object.fromEntries(formData.entries())),
-			method: 'POST',
-			headers: { 'Content-type': 'application/json' }
-		})
-			.then(response => {
-				if (response.ok) {
-					return response.text()
-				} else {
-					throw new Error('error');
-				}
-			})
+		postData('http://localhost:3000/requests', JSON.stringify(Object.fromEntries(formData.entries())))
 			.then(data => {
-				console.log('sadadad');
 				showThanksModal(message.success);
 			})
 			.catch(() => {
@@ -225,5 +240,5 @@ function postData(form) {
 }
 
 forms.forEach(item => {
-	postData(item)
+	formProcessing(item)
 })
