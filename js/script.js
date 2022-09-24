@@ -278,8 +278,9 @@ function changeSlideIndex() {
 }
 
 nextSlide.addEventListener('click', () => {
-	offset -= width.slice(0, -2);
 	slideIndex++;
+	offset -= width.slice(0, -2);
+
 	if (offset <= -parseInt(window.getComputedStyle(sliderField).width)) {
 		offset = 0
 		slideIndex = 1;
@@ -287,6 +288,11 @@ nextSlide.addEventListener('click', () => {
 	changeSlideIndex()
 
 	sliderField.style.transform = `translateX(${offset}px)`;
+
+	dots.forEach(dot => dot.style.opacity = '.5');
+	dots[slideIndex - 1].style.opacity = '1';
+
+
 })
 
 prevSlide.addEventListener('click', () => {
@@ -300,4 +306,69 @@ prevSlide.addEventListener('click', () => {
 	offset += +width.slice(0, -2);
 
 	sliderField.style.transform = `translateX(${offset}px)`;
+
+	dots.forEach(dot => dot.style.opacity = '.5');
+	dots[slideIndex - 1].style.opacity = '1';
+})
+
+// Dots
+
+sliderWrapper.style.position = 'relative';
+
+let dotsWrapper = document.createElement('ul'),
+	dots = [];
+dotsWrapper.classList.add('carousel-indicators');
+dotsWrapper.style.cssText = `
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 15;
+	display: flex;
+	justify-content: center;
+	margin-right: 15%;
+	margin-left: 15%;
+	list-style: none;
+`;
+sliderWrapper.append(dotsWrapper)
+
+slides.forEach((item, index) => {
+	const dot = document.createElement('li');
+	dot.classList.add('dot');
+	dot.setAttribute('data-slide-to', index + 1)
+
+	dot.style.cssText = `
+		box-sizing: content-box;
+		flex: 0 1 auto;
+		width: 30px;
+		height: 6px;
+		margin-right: 3px;
+		margin-left: 3px;
+		cursor: pointer;
+		background-color: #fff;
+		background-clip: padding-box;
+		border-top: 10px solid transparent;
+		border-bottom: 10px solid transparent;
+		opacity: .5;
+		transition: opacity .6s ease;
+	`;
+	if (index === 0) {
+		dot.style.opacity = 1;
+	}
+	dots.push(dot)
+	dotsWrapper.append(dot)
+})
+
+dotsWrapper.addEventListener('click', (e) => {
+	if (e.target.matches('.dot')) {
+		const slideTo = e.target.getAttribute('data-slide-to');
+
+		slideIndex = +slideTo;
+		offset = -+parseInt(width) * (slideTo - 1);
+
+		sliderField.style.transform = `translateX(${offset}px)`;
+		changeSlideIndex()
+		dots.forEach(dot => dot.style.opacity = '.5');
+		dots[slideIndex - 1].style.opacity = '1';
+	}
 })
