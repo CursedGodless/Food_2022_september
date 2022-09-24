@@ -146,23 +146,23 @@ class MenuCard {
 }
 
 getData('http://localhost:3000/menu')
-.then(data=>{
-	data.forEach(({img,altimg,title,descr,price})=>{
-		new MenuCard(img,altimg,title,descr,price,'.menu__field .container').render()
+	.then(data => {
+		data.forEach(({ img, altimg, title, descr, price }) => {
+			new MenuCard(img, altimg, title, descr, price, '.menu__field .container').render()
+		})
 	})
-})
 
 const forms = document.querySelectorAll('form');
 
 async function getData(src) {
 	return await fetch(src)
-	.then(response => {
-		if (response.ok) {
-			return response.json()
-		} else {
-			throw new Error('error');
-		}
-	})
+		.then(response => {
+			if (response.ok) {
+				return response.json()
+			} else {
+				throw new Error('error');
+			}
+		})
 }
 
 async function postData(src, data) {
@@ -241,4 +241,63 @@ function formProcessing(form) {
 
 forms.forEach(item => {
 	formProcessing(item)
+})
+
+
+// Slider 
+
+const slider = document.querySelector('.offer__slider'),
+	slides = slider.querySelectorAll('.offer__slide'),
+	prevSlide = slider.querySelector('.offer__slider-prev'),
+	nextSlide = slider.querySelector('.offer__slider-next'),
+	currentSlide = slider.querySelector('#current'),
+	totalSlides = slider.querySelector('#total'),
+	sliderWrapper = slider.querySelector('.offer__slider-wrapper'),
+	sliderField = slider.querySelector('.offer__slider-inner'),
+	width = window.getComputedStyle(sliderWrapper).width;
+
+let slideIndex = 1,
+	offset = 0;
+
+currentSlide.textContent = '01'
+totalSlides.textContent = setZero(slides.length);
+sliderWrapper.style.overflow = 'hidden';
+
+sliderField.style.cssText = `
+display: flex;
+width: ${100 * slides.length}%;
+transition: .5s all;
+`;
+
+slides.forEach(slide => {
+	slide.style.width = width;
+})
+
+function changeSlideIndex() {
+	currentSlide.textContent = setZero(slideIndex);
+}
+
+nextSlide.addEventListener('click', () => {
+	offset -= width.slice(0, -2);
+	slideIndex++;
+	if (offset <= -parseInt(window.getComputedStyle(sliderField).width)) {
+		offset = 0
+		slideIndex = 1;
+	}
+	changeSlideIndex()
+
+	sliderField.style.transform = `translateX(${offset}px)`;
+})
+
+prevSlide.addEventListener('click', () => {
+	slideIndex--
+	if (offset >= 0) {
+		offset = -parseInt(window.getComputedStyle(sliderField).width)
+		slideIndex = slides.length
+	}
+	changeSlideIndex()
+
+	offset += +width.slice(0, -2);
+
+	sliderField.style.transform = `translateX(${offset}px)`;
 })
